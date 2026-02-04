@@ -1,0 +1,15 @@
+Plan: Proxy CAP Mass Change S/4HANA con batch OData multipart
+Implementare un servizio proxy CAP Node.js in [testJoule](c:\Users\l.botta\OneDrive - Accenture\Documents\UNIPOL TECH\Code - Github\testJoule) che riceve richieste JSON da Joule e le converte in batch OData multipart per S/4HANA, seguendo l'architettura "ordine fantoccio" emersa dal meeting: il MERGE definisce COSA modificare (campi) su un ordine fisso (100001681), mentre la GET dinamica definisce QUALI ordini modificare tramite filtri, sfruttando la destination BTP esistente sb4-odata e gestendo la risposta asincrona del job schedulato.
+
+Steps
+Creare directory srv/ con servizio CDS e implementazione batch builder — Definire MassChangeService con action scheduleMassChange in srv/mass-change-service.cds (types Filters, FieldsToUpdate, OperationStatus) e implementare in srv/mass-change-service.js la logica buildBatchPayload() usando boundaries esatti (batch_Test01, changeset_Ugo1), ordine fantoccio hardcoded 100001681 nel MERGE, GET dinamica con filtri URL-encoded, headers specifici (sap-contextid-accept, sap-message-scope), e gestione response asincrona con status JOB_SCHEDULED
+
+Aggiornare package.json con dipendenze e configurazione destination REST — Aggiungere dipendenze @sap-cloud-sdk/connectivity e @sap-cloud-sdk/http-client nella sezione dependencies, e configurare cds.requires.SB4_ODATA come servizio REST puntando alla destination BTP sb4-odata, abilitando destinations: true per il servizio globale
+
+Modificare mta.yaml con destination service binding — Aggiungere resource testJoule-destination (service: destination, plan: lite) nella sezione resources e includerlo nei requires del modulo testJoule-srv per binding automatico su Cloud Foundry
+
+Build e deploy su Cloud Foundry con verifica binding — Eseguire npm install, mbt build, cf deploy mta_archives/testJoule_*.mtar, poi verificare binding con cf env testJoule-srv controllando presenza VCAP_SERVICES.destination e testare connettività destination sb4-odata dal cockpit BTP
+
+Testare endpoint con Postman simulando chiamata Joule — POST a https://<app-url>/odata/v4/mass-change/scheduleMassChange con payload JSON contenente filters (materialStartsWith, plant, salesOrg, creationDate) e fieldsToUpdate (RequirementSegment, Plant, StorageLocation), usando OAuth2 token da XSUAA, verificando response con status JOB_SCHEDULED e controllando log CF (cf logs testJoule-srv --recent) per trace del batch inviato a S/4
+
+Configurare custom action in Joule Studio — Creare action puntando all'endpoint CAP deployato, mappare input utente ai parametri filters e fieldsToUpdate, configurare output per mostrare status e jobName, e istruire Joule a rispondere "Job schedulato, verifica stato in app Manage Sales Documents (F4546)" evitando promesse di completamento sincrono dato che l'API è asincrona

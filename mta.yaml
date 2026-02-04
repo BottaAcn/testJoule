@@ -26,6 +26,7 @@ modules:
     requires:
       - name: testJoule-auth
       - name: testJoule-db
+      - name: testJoule-destination
 
   - name: testJoule-db-deployer
     type: hdb
@@ -78,3 +79,8 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: testJoule-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

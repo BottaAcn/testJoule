@@ -6,20 +6,31 @@
     "@cap-js/hana": "^2",
     "@sap/cds": "^9",
     "@sap/xssec": "^4",
-    "express": "^4"
+    "express": "^4",
+    "@sap-cloud-sdk/connectivity": "^4.1.1",
+    "@sap-cloud-sdk/http-client": "^4.1.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
     "@sap/cds-dk": "^9"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "build": "cds build --production",
+    "watch": "cds watch"
   },
   "private": true,
   "cds": {
     "requires": {
       "[production]": {
         "auth": "xsuaa"
+      },
+      "destinations": true,
+      "SB4_ODATA": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "sb4-odata"
+        }
       }
     }
   }
