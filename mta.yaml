@@ -17,6 +17,8 @@ modules:
     parameters:
       instances: 1
       buildpack: nodejs_buildpack
+      disk-quota: 1024M
+      memory: 1024M
     build-parameters:
       builder: npm-ci
     provides:
@@ -32,8 +34,8 @@ modules:
     path: app/router
     parameters:
       keep-existing-routes: true
-      disk-quota: 128M
-      memory: 128M
+      disk-quota: 512M
+      memory: 512M
     requires:
       - name: srv-api
         group: destinations

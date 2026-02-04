@@ -18,17 +18,3 @@ target/
 *.mtar
 mta_archives/
 
-# Other
-.DS_Store
-*.orig
-*.log
-
-*.iml
-*.flattened-pom.xml
-
-# IDEs
-# .vscode
-# .idea
-
-# @cap-js/cds-typer
-@cds-models
