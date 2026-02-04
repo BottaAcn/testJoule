@@ -31,19 +31,37 @@ module.exports = cds.service.impl(async function () {
     }
 
     try {
-      // 1. Build batch multipart payload following Postman template
+      // 1. Fetch CSRF token from S/4HANA (required for POST operations)
+      console.log('[Mass Change] Fetching CSRF token from S/4HANA...');
+      const csrfResponse = await s4Service.send({
+        method: 'GET',
+        path: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/',
+        headers: {
+          'X-CSRF-Token': 'Fetch',
+          'Accept': 'application/json'
+        }
+      });
+      
+      const csrfToken = csrfResponse.headers?.get('x-csrf-token');
+      if (!csrfToken) {
+        throw new Error('CSRF token not returned by S/4HANA');
+      }
+      console.log('[Mass Change] CSRF token obtained:', csrfToken);
+
+      // 2. Build batch multipart payload following Postman template
       const batchPayload = buildBatchPayload(filters, fieldsToUpdate);
       
       console.log('[Mass Change] Batch payload constructed:');
       console.log(batchPayload);
 
-      // 2. Send batch request to S/4HANA
+      // 3. Send batch request to S/4HANA with CSRF token
       const response = await s4Service.send({
         method: 'POST',
         path: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/$batch?sap-client=200',
         headers: {
           'Content-Type': 'multipart/mixed; boundary=batch_Test01',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-CSRF-Token': csrfToken
         },
         data: batchPayload
       });
