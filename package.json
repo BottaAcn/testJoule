@@ -29,7 +29,7 @@
       "SB4_ODATA": {
         "kind": "rest",
         "credentials": {
-          "destination": "sb4-odata"
+          "destination": "S4H"
         }
       }
     }
