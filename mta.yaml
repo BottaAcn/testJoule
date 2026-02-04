@@ -25,16 +25,8 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: testJoule-auth
-      - name: testJoule-db
       - name: testJoule-destination
 
-  - name: testJoule-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: testJoule-db
   - name: testJoule
     type: approuter.nodejs
     path: app/router
@@ -64,7 +56,7 @@ resources:
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: testJoule-${org}-${space}
+        xsappname: testJoule
         tenant-mode: dedicated
         oauth2-configuration:
           credential-types:
@@ -74,11 +66,6 @@ resources:
             - https://*~{app-api/app-uri}/**
     requires:
       - name: app-api
-  - name: testJoule-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
   - name: testJoule-destination
     type: org.cloudfoundry.managed-service
     parameters:
