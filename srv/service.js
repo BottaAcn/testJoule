@@ -8,6 +8,12 @@ module.exports = cds.service.impl(async function () {
 
   // Connect to S/4HANA destination configured in package.json
   const s4Service = await cds.connect.to('SB4_ODATA');
+  
+  if (!s4Service) {
+    throw new Error('Unable to connect to S4HANA_PCE_SSO destination. Check BTP destination configuration.');
+  }
+  
+  console.log('[Mass Change] Successfully connected to S4HANA destination');
 
   /**
    * Handler for scheduleMassChange action
@@ -35,7 +41,7 @@ module.exports = cds.service.impl(async function () {
       console.log('[Mass Change] Fetching CSRF token from S/4HANA...');
       const csrfResponse = await s4Service.send({
         method: 'GET',
-        path: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/',
+        path: '/',
         headers: {
           'X-CSRF-Token': 'Fetch',
           'Accept': 'application/json'
@@ -57,7 +63,7 @@ module.exports = cds.service.impl(async function () {
       // 3. Send batch request to S/4HANA with CSRF token
       const response = await s4Service.send({
         method: 'POST',
-        path: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/$batch?sap-client=200',
+        path: '/$batch?sap-client=200',
         headers: {
           'Content-Type': 'multipart/mixed; boundary=batch_Test01',
           'Accept': 'application/json',

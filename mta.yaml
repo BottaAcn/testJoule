@@ -28,6 +28,7 @@ modules:
     requires:
       - name: testJoule-auth
       - name: testJoule-destination
+      - name: testJoule-connectivity
 
   - name: testJoule
     type: approuter.nodejs
@@ -72,4 +73,9 @@ resources:
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
+      service-plan: lite
+  - name: testJoule-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
       service-plan: lite

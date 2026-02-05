@@ -26,9 +26,9 @@
       },
       "destinations": true,
       "SB4_ODATA": {
-        "kind": "rest",
+        "kind": "odata-v2",
         "credentials": {
-          "destination": "S4H"
+          "destination": "S4HANA_PCE_SSO"
         }
       }
     }

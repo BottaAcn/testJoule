@@ -1,4 +1,6 @@
 {
+  "xsappname": "testJoule",
+  "tenant-mode": "dedicated",
   "scopes": [],
   "attributes": [],
   "role-templates": [],
