@@ -269,28 +269,24 @@ module.exports = cds.service.impl(async function () {
       console.log('[RITORNO] Connected to S4HANA via OnPremService');
     }
     
-    const { filters } = req.data;
+    const { filters, fieldsToUpdate } = req.data;
     
     console.log('[RITORNO] Reversal request received:', JSON.stringify(req.data, null, 2));
 
-    if (!filters) {
+    if (!filters || !fieldsToUpdate) {
       return {
         ID: cds.utils.uuid(),
         status: 'ERROR',
         jobName: 'Mass Field Update RITORNO',
         timestamp: new Date().toISOString(),
-        message: 'Missing required parameter: filters',
+        message: 'Missing required parameters: filters or fieldsToUpdate',
         fioriAppLink: ''
       };
     }
 
     try {
-      // Fixed RITORNO values from postman.md
-      const riturnoFields = {
-        RequirementSegment: 'PPCOM99',
-        Plant: '142A',
-        StorageLocation: 'AFS'
-      };
+      // Use fieldsToUpdate from request (now dynamic from Joule)
+      const riturnoFields = fieldsToUpdate;
 
       // 1. Fetch CSRF token
       console.log('[RITORNO] Fetching CSRF token...');
@@ -314,10 +310,9 @@ module.exports = cds.service.impl(async function () {
       }
       console.log('[RITORNO] CSRF token obtained:', csrfToken);
 
-      // 2. Build batch payload with RITORNO values
-      // Note: GET filter uses Plant=140A (after ANDATA change) as per postman.md
-      const riturnoFilters = { ...filters, plant: '140A' }; // Search in changed plant
-      const batchPayload = buildBatchPayload(riturnoFilters, riturnoFields);
+      // 2. Build batch payload with dynamic values from Joule
+      // Use filters as provided by user (no hard-coded plant override)
+      const batchPayload = buildBatchPayload(filters, riturnoFields);
       
       console.log('[RITORNO] Batch payload ready, length:', batchPayload.length, 'bytes');
 
@@ -369,7 +364,7 @@ module.exports = cds.service.impl(async function () {
 
   /**
    * READ action - Retrieves orders matching filters to verify changes
-   * Uses GET query to read current values from S/4HANA
+   * Uses BATCH request with fake MERGE + GET (same as scheduleMassChange/reverseMassChange)
    */
   this.on('readOrders', async (req) => {
     // Initialize connection on first use
@@ -391,30 +386,67 @@ module.exports = cds.service.impl(async function () {
     }
 
     try {
-      // Build OData query with filters
-      const material = encodeURIComponent(filters.materialStartsWith);
-      const plant = encodeURIComponent(filters.plant);
-      const salesOrg = encodeURIComponent(filters.salesOrg);
-      const date = encodeURIComponent(filters.creationDate);
-      
-      const filterQuery = `startswith(Material,'${material}') and Plant eq '${plant}' and SalesDocumentDate eq datetime'${date}T00:00:00' and SalesOrganization eq '${salesOrg}'`;
-      const encodedFilter = encodeURIComponent(filterQuery);
-      
-      console.log('[READ] Filter query:', filterQuery);
-
-      // Execute GET request
-      const response = await OnPremService.send({
-        method: 'GET',
-        path: `/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/C_RFM_MaSaDoEditSlsOrdItm?sap-client=200&$filter=${encodedFilter}&$select=SalesOrder,SalesOrderItem,Material,RequirementSegment,Plant,StorageLocation,SalesOrganization,SalesDocumentDate`,
-        headers: { 
-          'Accept': 'application/json'
+      // 1. Fetch CSRF token (same as other actions)
+      console.log('[READ] Fetching CSRF token...');
+      const { executeHttpRequest } = require('@sap-cloud-sdk/http-client');
+      const csrfResponse = await executeHttpRequest(
+        { destinationName: 'S4HANA_PCE_SSO' },
+        {
+          method: 'get',
+          url: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/',
+          headers: {
+            'X-CSRF-Token': 'Fetch',
+            'Accept': 'application/json'
+          }
         }
-      });
-
-      console.log('[READ] Response received, parsing results...');
+      );
       
-      // Parse OData response
-      const results = response.d?.results || [];
+      const csrfToken = csrfResponse.headers['x-csrf-token'];
+      const cookies = csrfResponse.headers['set-cookie'];
+      if (!csrfToken) {
+        throw new Error('CSRF token not returned by S/4HANA');
+      }
+      console.log('[READ] CSRF token obtained:', csrfToken);
+
+      // 2. Build batch payload with fake MERGE + GET
+      // Pass null fields to skip MERGE, only GET will be included
+      const batchPayload = buildBatchPayload(filters, null); // null = no MERGE, only GET
+      
+      console.log('[READ] Batch payload ready, length:', batchPayload.length, 'bytes');
+
+      // 3. Send batch request
+      const batchResponse = await executeHttpRequest(
+        { destinationName: 'S4HANA_PCE_SSO' },
+        {
+          method: 'post',
+          url: '/sap/opu/odata/sap/RFM_MANAGE_SALES_ORDERS_SRV/$batch?sap-client=200',
+          headers: {
+            'Content-Type': 'multipart/mixed; boundary=batch_Test01',
+            'Accept': 'application/json',
+            'X-CSRF-Token': csrfToken,
+            'Cookie': cookies ? cookies.join('; ') : ''
+          },
+          data: batchPayload
+        }
+      );
+
+      console.log('[READ] S/4HANA batch response status:', batchResponse.status);
+      console.log('[READ] S/4HANA batch response data:', JSON.stringify(batchResponse.data).substring(0, 500));
+
+      // 4. Parse batch response to extract GET results
+      const responseData = batchResponse.data;
+      let results = [];
+      
+      // Extract JSON from batch response (look for {"d":{"results":[...]}} pattern)
+      if (typeof responseData === 'string') {
+        // Find the JSON response (format: {"d":{"results":[...]}})
+        const jsonMatch = responseData.match(/{\"d\":\{\"results\":\[(.*?)\]\}\}/s);
+        if (jsonMatch) {
+          const fullJson = `{"d":{"results":[${jsonMatch[1]}]}}`;
+          const jsonData = JSON.parse(fullJson);
+          results = jsonData.d?.results || [];
+        }
+      }
       
       console.log('[READ] Found', results.length, 'orders');
 
@@ -461,21 +493,10 @@ module.exports = cds.service.impl(async function () {
  * - S/4HANA combines both to execute mass update
  * 
  * @param {Object} filters - Selection criteria for orders
- * @param {Object} fields - Fields to update
+ * @param {Object} fields - Fields to update (null to skip MERGE, only GET)
  * @returns {string} Batch multipart payload
  */
 function buildBatchPayload(filters, fields) {
-  
-  // Build JSON body for MERGE
-  const mergeBody = JSON.stringify({
-    "RequirementSegment": fields.RequirementSegment,
-    "Plant": fields.Plant,
-    "StorageLocation": fields.StorageLocation,
-    "RFM_SD_ApplJobAction": "01",
-    "InternalComment": "Mass Field Update from Joule",
-    "SalesOrdItemIsSelected": "X",
-    "SalesOrdItemsAreSelected": "X"
-  });
   
   // Build GET filter query
   const material = filters.materialStartsWith;
@@ -487,38 +508,53 @@ function buildBatchPayload(filters, fields) {
   // Host header value (internal S/4HANA hostname from Destination)
   const HOST = "s4-sb4:44380";
   
-  // Build complete batch payload with CRLF line endings
-  // CRITICAL: Host and Content-Length headers are REQUIRED for S/4HANA
-  const payload = [
-    // Changeset part (wraps write operations like MERGE)
-    '--batch_Test01',
-    'Content-Type: multipart/mixed; boundary=changeset_Ugo1',
-    '',
-    '--changeset_Ugo1',
-    'Content-Type: application/http',
-    'Content-Transfer-Encoding: binary',
-    '',
-    'MERGE C_RFM_MaSaDoEditSlsOrdItm(SalesOrder=\'100001681\',SalesOrderItem=\'000010\')?sap-client=200 HTTP/1.1',
-    `Host: ${HOST}`,  // CRITICAL: Host header required
-    'Content-Type: application/json',
-    `Content-Length: ${mergeBody.length}`,  // CRITICAL: Content-Length required for body
-    'Accept: application/json',
-    '',  // Blank line before body
-    mergeBody,
-    '--changeset_Ugo1--',
-    '',
-    // GET part (read operation, outside changeset)
+  const parts = [];
+  
+  // Add MERGE changeset only if fields are provided
+  if (fields) {
+    const mergeBody = JSON.stringify({
+      "RequirementSegment": fields.RequirementSegment,
+      "Plant": fields.Plant,
+      "StorageLocation": fields.StorageLocation,
+      "RFM_SD_ApplJobAction": "01",
+      "InternalComment": "Mass Field Update from Joule",
+      "SalesOrdItemIsSelected": "X",
+      "SalesOrdItemsAreSelected": "X"
+    });
+    
+    parts.push(
+      '--batch_Test01',
+      'Content-Type: multipart/mixed; boundary=changeset_Ugo1',
+      '',
+      '--changeset_Ugo1',
+      'Content-Type: application/http',
+      'Content-Transfer-Encoding: binary',
+      '',
+      'MERGE C_RFM_MaSaDoEditSlsOrdItm(SalesOrder=\'100001681\',SalesOrderItem=\'000010\')?sap-client=200 HTTP/1.1',
+      `Host: ${HOST}`,
+      'Content-Type: application/json',
+      `Content-Length: ${mergeBody.length}`,
+      'Accept: application/json',
+      '',
+      mergeBody,
+      '--changeset_Ugo1--',
+      ''
+    );
+  }
+  
+  // Always add GET part
+  parts.push(
     '--batch_Test01',
     'Content-Type: application/http',
     'Content-Transfer-Encoding: binary',
     '',
     `GET C_RFM_MaSaDoEditSlsOrdItm?$top=1&sap-client=200&$filter=${getFilter} HTTP/1.1`,
-    `Host: ${HOST}`,  // CRITICAL: Host header required for GET too
+    `Host: ${HOST}`,
     'Accept: application/json',
     '',
-    '',  // CRITICAL: Two blank lines after GET headers (one closes headers, one for no body)
+    '',
     '--batch_Test01--'
-  ].join('\r\n');  // CRITICAL: Use CRLF as per OData spec
+  );
 
-  return payload;
+  return parts.join('\r\n');
 }
