@@ -1,0 +1,35 @@
+--batch_Test01
+Content-Type: multipart/mixed; boundary=changeset_Ugo1
+
+--changeset_Ugo1
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+MERGE C_RFM_MaSaDoEditSlsOrdItm(SalesOrder='100001681',SalesOrderItem='000010')?sap-client=200 HTTP/1.1
+sap-contextid-accept: header
+Accept: application/json
+Accept-Language: en
+DataServiceVersion: 2.0
+MaxDataServiceVersion: 2.0
+X-Requested-With: XMLHttpRequest
+Content-Type: application/json
+sap-message-scope: BusinessObject
+
+{"RequirementSegment": "PPCOMFR", "Plant": "140A", "StorageLocation": "ROD", "RFM_SD_ApplJobAction": "01", "InternalComment": "Mass Field Update from Joule", "SalesOrdItemIsSelected": "X", "SalesOrdItemsAreSelected": "X"}
+--changeset_Ugo1--
+
+--batch_Test01
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET C_RFM_MaSaDoEditSlsOrdItm?sap-client=200&$top=1&$filter=startswith(Material,%27J01AA0119J35002001%27)%20and%20Plant%20eq%20%27142A%27%20and%20SalesDocumentDate%20eq%20datetime%272026-01-13T00%3a00%3a00%27%20and%20SalesOrganization%20eq%20%27142%27 HTTP/1.1
+sap-cancel-on-close: true
+sap-contextid-accept: header
+Accept: application/json
+Accept-Language: en
+DataServiceVersion: 2.0
+MaxDataServiceVersion: 2.0
+X-Requested-With: XMLHttpRequest
+sap-message-scope: BusinessObject
+
+--batch_Test01--

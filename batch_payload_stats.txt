@@ -1,0 +1,26 @@
+Batch Payload Statistics
+================================================================================
+
+Total bytes: 1335
+Total lines: 35
+CRLF count: 34
+LF-only count: 0
+
+Boundaries found:
+  --batch_Test01 (start): 3
+  --batch_Test01-- (end): 1
+  --changeset_Ugo1: 2
+  --changeset_Ugo1--: 1
+
+Content headers:
+  Content-Type: 4
+  Content-Transfer-Encoding: 2
+
+HTTP methods:
+  MERGE requests: 1
+  GET requests: 1
+
+JSON body:
+  Start position: 499
+  End position: 719
+  Length: 221

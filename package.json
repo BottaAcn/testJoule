@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "dependencies": {
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4",
     "@sap/cds": "^9",
     "@sap/xssec": "^4",
-    "express": "^4",
-    "@sap-cloud-sdk/connectivity": "^4.1.1",
-    "@sap-cloud-sdk/http-client": "^4.1.1"
+    "express": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
@@ -15,22 +15,24 @@
   },
   "scripts": {
     "start": "cds-serve",
+    "hybrid": "npx cds bind --exec npx cds serve --profile hybrid",
     "build": "cds build --production",
     "watch": "cds watch"
   },
   "private": true,
   "cds": {
     "requires": {
-      "[production]": {
-        "auth": "xsuaa"
-      },
-      "destinations": true,
-      "SB4_ODATA": {
-        "kind": "odata-v2",
+      "OnPremService": {
+        "kind": "odata",
         "credentials": {
           "destination": "S4HANA_PCE_SSO"
         }
-      }
+      },
+      "[production]": {
+        "auth": "xsuaa"
+      },
+      "connectivity": true,
+      "destinations": true
     }
   }
 }

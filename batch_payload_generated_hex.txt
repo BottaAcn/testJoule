@@ -1,0 +1,108 @@
+Hex Dump (first 1000 bytes):
+================================================================================
+
+0000  2d 2d 62 61 74 63 68 5f 54 65 73 74 30 31 0d 0a   --batch_Test01..
+0010  43 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 6d 75   Content-Type: mu
+0020  6c 74 69 70 61 72 74 2f 6d 69 78 65 64 3b 20 62   ltipart/mixed; b
+0030  6f 75 6e 64 61 72 79 3d 63 68 61 6e 67 65 73 65   oundary=changese
+0040  74 5f 55 67 6f 31 0d 0a 0d 0a 2d 2d 63 68 61 6e   t_Ugo1....--chan
+0050  67 65 73 65 74 5f 55 67 6f 31 0d 0a 43 6f 6e 74   geset_Ugo1..Cont
+0060  65 6e 74 2d 54 79 70 65 3a 20 61 70 70 6c 69 63   ent-Type: applic
+0070  61 74 69 6f 6e 2f 68 74 74 70 0d 0a 43 6f 6e 74   ation/http..Cont
+0080  65 6e 74 2d 54 72 61 6e 73 66 65 72 2d 45 6e 63   ent-Transfer-Enc
+0090  6f 64 69 6e 67 3a 20 62 69 6e 61 72 79 0d 0a 0d   oding: binary...
+00a0  0a 4d 45 52 47 45 20 43 5f 52 46 4d 5f 4d 61 53   .MERGE C_RFM_MaS
+00b0  61 44 6f 45 64 69 74 53 6c 73 4f 72 64 49 74 6d   aDoEditSlsOrdItm
+00c0  28 53 61 6c 65 73 4f 72 64 65 72 3d 27 31 30 30   (SalesOrder='100
+00d0  30 30 31 36 38 31 27 2c 53 61 6c 65 73 4f 72 64   001681',SalesOrd
+00e0  65 72 49 74 65 6d 3d 27 30 30 30 30 31 30 27 29   erItem='000010')
+00f0  3f 73 61 70 2d 63 6c 69 65 6e 74 3d 32 30 30 20   ?sap-client=200 
+0100  48 54 54 50 2f 31 2e 31 0d 0a 73 61 70 2d 63 6f   HTTP/1.1..sap-co
+0110  6e 74 65 78 74 69 64 2d 61 63 63 65 70 74 3a 20   ntextid-accept: 
+0120  68 65 61 64 65 72 0d 0a 41 63 63 65 70 74 3a 20   header..Accept: 
+0130  61 70 70 6c 69 63 61 74 69 6f 6e 2f 6a 73 6f 6e   application/json
+0140  0d 0a 41 63 63 65 70 74 2d 4c 61 6e 67 75 61 67   ..Accept-Languag
+0150  65 3a 20 65 6e 0d 0a 44 61 74 61 53 65 72 76 69   e: en..DataServi
+0160  63 65 56 65 72 73 69 6f 6e 3a 20 32 2e 30 0d 0a   ceVersion: 2.0..
+0170  4d 61 78 44 61 74 61 53 65 72 76 69 63 65 56 65   MaxDataServiceVe
+0180  72 73 69 6f 6e 3a 20 32 2e 30 0d 0a 58 2d 52 65   rsion: 2.0..X-Re
+0190  71 75 65 73 74 65 64 2d 57 69 74 68 3a 20 58 4d   quested-With: XM
+01a0  4c 48 74 74 70 52 65 71 75 65 73 74 0d 0a 43 6f   LHttpRequest..Co
+01b0  6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 70 6c   ntent-Type: appl
+01c0  69 63 61 74 69 6f 6e 2f 6a 73 6f 6e 0d 0a 73 61   ication/json..sa
+01d0  70 2d 6d 65 73 73 61 67 65 2d 73 63 6f 70 65 3a   p-message-scope:
+01e0  20 42 75 73 69 6e 65 73 73 4f 62 6a 65 63 74 0d    BusinessObject.
+01f0  0a 0d 0a 7b 22 52 65 71 75 69 72 65 6d 65 6e 74   ...{"Requirement
+0200  53 65 67 6d 65 6e 74 22 3a 20 22 50 50 43 4f 4d   Segment": "PPCOM
+0210  46 52 22 2c 20 22 50 6c 61 6e 74 22 3a 20 22 31   FR", "Plant": "1
+0220  34 30 41 22 2c 20 22 53 74 6f 72 61 67 65 4c 6f   40A", "StorageLo
+0230  63 61 74 69 6f 6e 22 3a 20 22 52 4f 44 22 2c 20   cation": "ROD", 
+0240  22 52 46 4d 5f 53 44 5f 41 70 70 6c 4a 6f 62 41   "RFM_SD_ApplJobA
+0250  63 74 69 6f 6e 22 3a 20 22 30 31 22 2c 20 22 49   ction": "01", "I
+0260  6e 74 65 72 6e 61 6c 43 6f 6d 6d 65 6e 74 22 3a   nternalComment":
+0270  20 22 4d 61 73 73 20 46 69 65 6c 64 20 55 70 64    "Mass Field Upd
+0280  61 74 65 20 66 72 6f 6d 20 4a 6f 75 6c 65 22 2c   ate from Joule",
+0290  20 22 53 61 6c 65 73 4f 72 64 49 74 65 6d 49 73    "SalesOrdItemIs
+02a0  53 65 6c 65 63 74 65 64 22 3a 20 22 58 22 2c 20   Selected": "X", 
+02b0  22 53 61 6c 65 73 4f 72 64 49 74 65 6d 73 41 72   "SalesOrdItemsAr
+02c0  65 53 65 6c 65 63 74 65 64 22 3a 20 22 58 22 7d   eSelected": "X"}
+02d0  0d 0a 2d 2d 63 68 61 6e 67 65 73 65 74 5f 55 67   ..--changeset_Ug
+02e0  6f 31 2d 2d 0d 0a 0d 0a 2d 2d 62 61 74 63 68 5f   o1--....--batch_
+02f0  54 65 73 74 30 31 0d 0a 43 6f 6e 74 65 6e 74 2d   Test01..Content-
+0300  54 79 70 65 3a 20 61 70 70 6c 69 63 61 74 69 6f   Type: applicatio
+0310  6e 2f 68 74 74 70 0d 0a 43 6f 6e 74 65 6e 74 2d   n/http..Content-
+0320  54 72 61 6e 73 66 65 72 2d 45 6e 63 6f 64 69 6e   Transfer-Encodin
+0330  67 3a 20 62 69 6e 61 72 79 0d 0a 0d 0a 47 45 54   g: binary....GET
+0340  20 43 5f 52 46 4d 5f 4d 61 53 61 44 6f 45 64 69    C_RFM_MaSaDoEdi
+0350  74 53 6c 73 4f 72 64 49 74 6d 3f 73 61 70 2d 63   tSlsOrdItm?sap-c
+0360  6c 69 65 6e 74 3d 32 30 30 26 24 74 6f 70 3d 31   lient=200&$top=1
+0370  26 24 66 69 6c 74 65 72 3d 73 74 61 72 74 73 77   &$filter=startsw
+0380  69 74 68 28 4d 61 74 65 72 69 61 6c 2c 25 32 37   ith(Material,%27
+0390  4a 30 31 41 41 30 31 31 39 4a 33 35 30 30 32 30   J01AA0119J350020
+03a0  30 31 25 32 37 29 25 32 30 61 6e 64 25 32 30 50   01%27)%20and%20P
+03b0  6c 61 6e 74 25 32 30 65 71 25 32 30 25 32 37 31   lant%20eq%20%271
+03c0  34 32 41 25 32 37 25 32 30 61 6e 64 25 32 30 53   42A%27%20and%20S
+03d0  61 6c 65 73 44 6f 63 75 6d 65 6e 74 44 61 74 65   alesDocumentDate
+03e0  25 32 30 65 71 25 32 30 64 61 74 65 74 69 6d 65   %20eq%20datetime
+
+
+================================================================================
+CRLF Positions:
+================================================================================
+
+CRLF # 1 at byte   14: '--batch_Test01\r\nContent-Type: multip'
+CRLF # 2 at byte   70: 'ndary=changeset_Ugo1\r\n\r\n--changeset_Ugo1\r\n'
+CRLF # 3 at byte   72: 'ary=changeset_Ugo1\r\n\r\n--changeset_Ugo1\r\nCo'
+CRLF # 4 at byte   90: '\r\n\r\n--changeset_Ugo1\r\nContent-Type: applic'
+CRLF # 5 at byte  122: 'pe: application/http\r\nContent-Transfer-Enc'
+CRLF # 6 at byte  157: 'fer-Encoding: binary\r\n\r\nMERGE C_RFM_MaSaDo'
+CRLF # 7 at byte  159: 'r-Encoding: binary\r\n\r\nMERGE C_RFM_MaSaDoEd'
+CRLF # 8 at byte  264: '-client=200 HTTP/1.1\r\nsap-contextid-accept'
+CRLF # 9 at byte  294: 'extid-accept: header\r\nAccept: application/'
+CRLF #10 at byte  320: 'pt: application/json\r\nAccept-Language: en\r'
+CRLF #11 at byte  341: '\nAccept-Language: en\r\nDataServiceVersion: '
+CRLF #12 at byte  366: 'aServiceVersion: 2.0\r\nMaxDataServiceVersio'
+CRLF #13 at byte  394: 'aServiceVersion: 2.0\r\nX-Requested-With: XM'
+CRLF #14 at byte  428: 'With: XMLHttpRequest\r\nContent-Type: applic'
+CRLF #15 at byte  460: 'pe: application/json\r\nsap-message-scope: B'
+CRLF #16 at byte  495: 'cope: BusinessObject\r\n\r\n{"RequirementSegme'
+CRLF #17 at byte  497: 'pe: BusinessObject\r\n\r\n{"RequirementSegment'
+CRLF #18 at byte  720: 'msAreSelected": "X"}\r\n--changeset_Ugo1--\r\n'
+CRLF #19 at byte  740: '\r\n--changeset_Ugo1--\r\n\r\n--batch_Test01\r\nCo'
+CRLF #20 at byte  742: '--changeset_Ugo1--\r\n\r\n--batch_Test01\r\nCont'
+CRLF #21 at byte  758: '--\r\n\r\n--batch_Test01\r\nContent-Type: applic'
+CRLF #22 at byte  790: 'pe: application/http\r\nContent-Transfer-Enc'
+CRLF #23 at byte  825: 'fer-Encoding: binary\r\n\r\nGET C_RFM_MaSaDoEd'
+CRLF #24 at byte  827: 'r-Encoding: binary\r\n\r\nGET C_RFM_MaSaDoEdit'
+CRLF #25 at byte 1089: '20%27142%27 HTTP/1.1\r\nsap-cancel-on-close:'
+CRLF #26 at byte 1116: 'ancel-on-close: true\r\nsap-contextid-accept'
+CRLF #27 at byte 1146: 'extid-accept: header\r\nAccept: application/'
+CRLF #28 at byte 1172: 'pt: application/json\r\nAccept-Language: en\r'
+CRLF #29 at byte 1193: '\nAccept-Language: en\r\nDataServiceVersion: '
+CRLF #30 at byte 1218: 'aServiceVersion: 2.0\r\nMaxDataServiceVersio'
+CRLF #31 at byte 1246: 'aServiceVersion: 2.0\r\nX-Requested-With: XM'
+CRLF #32 at byte 1280: 'With: XMLHttpRequest\r\nsap-message-scope: B'
+CRLF #33 at byte 1315: 'cope: BusinessObject\r\n\r\n--batch_Test01--'
+CRLF #34 at byte 1317: 'pe: BusinessObject\r\n\r\n--batch_Test01--'
+
+Total CRLFs found: 34
